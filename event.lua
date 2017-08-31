@@ -118,7 +118,7 @@ function Event.OnUpdate()
                     NPC_ATTACK_START = 0,
                     NPC_DEAD = false,
                 }
-                Event:emit('spawn', npc)
+                -- Event:emit('spawn', npc)
             end
 
             -- check death event
