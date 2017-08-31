@@ -80,17 +80,18 @@ end
 
 
 function Event.OnProjectile(projectile) 
-    if not projectile or not projectile.source or not projectile.target or Entity.IsDormant(projectile.source) then return end
+    if not projectile or not projectile.source or not projectile.target then return end
     if not projectile.isAttack then return end
 
     local npc = projectile.source
-    if not Entity.IsNPC(npc) or Entity.GetHealth(npc) <= 0 then return end
+    -- if not Entity.IsNPC(npc) or Entity.GetHealth(npc) <= 0 then return end
     local target = projectile.target
 
     local i = Entity.GetIndex(npc)
+    Event:emit('trace_attack', npc, target, Event.GetHitDamage(npc, target), os.time() + Event.RangedHitDelay(npc, target, projectile.moveSpeed), Event.HitDelay(npc, target, false))
+
     if Event.EntityList[i] == nil then return end
     Event.EntityList[i][NPC_TARGET] = target
-    Event:emit('trace_attack', npc, target, Event.GetHitDamage(npc, target), os.time() + Event.RangedHitDelay(npc, target, projectile.moveSpeed))
     -- local npc_id = Entity.GetIndex(npc)
 
     -- if targets[npc_id] ~= nil and NPC.IsKillable(target) then
@@ -111,6 +112,7 @@ function Event.OnUpdate()
             local health = Entity.GetHealth(npc)
 
             if Event.EntityList[i] == nil or (Event.EntityList[i][NPC_DEAD] == true and health > 0) then
+                -- if Event.EntityList[i] ~= nil --> emit respawn!
                 Event.EntityList[i] = {
                     NPC_OLD_HEALTH = health,
                     NPC_TARGET = nil,
@@ -138,7 +140,7 @@ function Event.OnUpdate()
                 if Event.EntityList[i][NPC_IN_ATTACK] and os.time() > Event.EntityList[i][NPC_ATTACK_START] + Event.HitDelay(npc, target, true) then
                     Event.EntityList[i][NPC_ATTACK_START] = 0
                     Event.EntityList[i][NPC_IN_ATTACK] = false
-                    Event:emit('trace_attack', npc, target, Event.GetHitDamage(npc, target), Event.EntityList[i][NPC_ATTACK_START] + Event.HitDelay(npc, target, false))
+                    -- Event:emit('trace_attack', npc, target, Event.GetHitDamage(npc, target), Event.EntityList[i][NPC_ATTACK_START] + Event.HitDelay(npc, target, false))
                 end
                 if NPC.IsAttacking(npc) then
                     if not Event.EntityList[i][NPC_IN_ATTACK] then
@@ -151,10 +153,10 @@ function Event.OnUpdate()
                             target = Event.GetTarget(npc, target_at)
                             if target ~= nil then
                                 Event.EntityList[i][NPC_TARGET] = target
-                                Event:emit('trace_attack', npc, target, Event.GetHitDamage(npc, target), Event.EntityList[i][NPC_ATTACK_START] + Event.HitDelay(npc, target, false))
+                                Event:emit('trace_attack', npc, target, Event.GetHitDamage(npc, target), Event.EntityList[i][NPC_ATTACK_START] + Event.HitDelay(npc, target, false), Event.HitDelay(npc, target, false))
                             end
                         else
-                            Event:emit('trace_attack', npc, nil, Event.GetHitDamage(npc, target), Event.EntityList[i][NPC_ATTACK_START] + Event.HitDelay(npc, nil, false))
+                            Event:emit('trace_attack', npc, nil, Event.GetHitDamage(npc, target), Event.EntityList[i][NPC_ATTACK_START] + Event.HitDelay(npc, nil, false), Event.HitDelay(npc, target, false))
                         end
                     end
                 else
@@ -470,6 +472,8 @@ Event.projective_speed = {
 
 
 function Event.HitDelay(source, target, full)
+
+    if source == nil then return 9999 end
 
     local increasedAS = NPC.GetIncreasedAttackSpeed(source)
     local attackTime = NPC.GetAttackTime(source)
