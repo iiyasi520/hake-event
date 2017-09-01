@@ -62,14 +62,14 @@ end)
 ```
 
 
-`Event:on('trace_attack')` - Called on attack.
+`Event:on('trace_attack')` - Called on attack. **target can be nil for ranged units before a projective exists**
 
 ```
-Event:on('trace_attack', function(ent, target, predicted_damage, predicted_time)
-    local i = Entity.GetIndex(ent)
+Event:on('trace_attack', function(attacker, target, predicted_damage, predicted_time)
+    local i = Entity.GetIndex(attacker)
     local ti = Entity.GetIndex(target)
 
-    Log.Write('Entity #i'..' is attacking '..ti..' and will hit for '..predicted_damage..' in '..predicted_time )
+    Log.Write('Entity #i'..' is attacking #'..ti..' and will hit for '..predicted_damage..' in '..predicted_time )
 end)
 ```
 
