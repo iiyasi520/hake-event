@@ -473,6 +473,7 @@ function Event.HitDelay(source, target, full)
     local attackPoint
     local attackBackSwing
     local unit_name = NPC.GetUnitName(source)
+    if unit_name == nil then return 9999 end
 
     for i, v in pairs(Event.attackPointTable) do
         if i == unit_name then
