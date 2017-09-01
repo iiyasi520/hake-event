@@ -88,17 +88,10 @@ function Event.OnProjectile(projectile)
     local target = projectile.target
 
     local i = Entity.GetIndex(npc)
-    Event:emit('trace_attack', npc, target, Event.GetHitDamage(npc, target), os.time() + Event.RangedHitDelay(npc, target, projectile.moveSpeed), Event.HitDelay(npc, target, false))
+    Event:emit('trace_attack', npc, target, Event.GetHitDamage(npc, target), os.time() + Event.RangedHitDelay(npc, target, projectile.moveSpeed))
 
     if Event.EntityList[i] == nil then return end
     Event.EntityList[i][NPC_TARGET] = target
-    -- local npc_id = Entity.GetIndex(npc)
-
-    -- if targets[npc_id] ~= nil and NPC.IsKillable(target) then
-    --   local curtime = GameRules.GetGameTime()
-    --   targets[npc_id][15] = target
-    --   targets[npc_id][16] = curtime + HitMaster.RangedHitDelay(npc, target, projectile.moveSpeed)
-    -- end
 end
 
 
@@ -153,10 +146,10 @@ function Event.OnUpdate()
                             target = Event.GetTarget(npc, target_at)
                             if target ~= nil then
                                 Event.EntityList[i][NPC_TARGET] = target
-                                Event:emit('trace_attack', npc, target, Event.GetHitDamage(npc, target), Event.EntityList[i][NPC_ATTACK_START] + Event.HitDelay(npc, target, false), Event.HitDelay(npc, target, false))
+                                Event:emit('trace_attack', npc, target, Event.GetHitDamage(npc, target), Event.EntityList[i][NPC_ATTACK_START] + Event.HitDelay(npc, target, false))
                             end
                         else
-                            Event:emit('trace_attack', npc, nil, Event.GetHitDamage(npc, target), Event.EntityList[i][NPC_ATTACK_START] + Event.HitDelay(npc, nil, false), Event.HitDelay(npc, target, false))
+                            Event:emit('trace_attack', npc, nil, Event.GetHitDamage(npc, target), Event.EntityList[i][NPC_ATTACK_START] + Event.HitDelay(npc, nil, false))
                         end
                     end
                 else

@@ -3,8 +3,25 @@
 
 Event driven hacke.me
 
+## Variables
 
-## In the box
+`Event.InGame` - Returns `true` if you're playing a match now.
+
+```
+function HitMaster.OnUpdate()
+
+    if not Event.InGame then return end
+
+end
+```
+
+## Functions
+
+`Event.GetHitDamage(attacker, target)`  - Returns the damage `attacker` entity can do to `target`.
+
+`Event.HitDelay(attacker, target, full)` - Returns time to complete attack. If `full` is true returns time to complete attack with backswing.
+
+## Events
 
 `Event:on('reset')` - Called as soon as player is not in match. (to reset your script's data)
 
